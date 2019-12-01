@@ -4,7 +4,7 @@ import cn.hutool.aop.ProxyUtil;
 import cn.hutool.core.collection.CollUtil;
 import com.fast.aspect.DaoActuatorAspect;
 import com.fast.cache.DataCache;
-import com.fast.condition.FastExample;
+import com.fast.condition.FastBase;
 import com.fast.config.FastDaoAttributes;
 import com.fast.dao.DaoActuator;
 import com.fast.mapper.TableMapper;
@@ -29,7 +29,7 @@ public class DaoTemplate<T> {
     /**
      * 条件封装
      */
-    private FastExample<T> fastExample;
+    private FastBase<T> fastBase;
     /**
      * ORM实现
      */
@@ -46,20 +46,20 @@ public class DaoTemplate<T> {
      * 初始化
      *
      * @param <T>         操作对象的泛型信息
-     * @param fastExample 条件封装
+     * @param fastBase 条件封装
      * @param clazz       执行类
      * @return ORM执行器
      */
-    public static <T> DaoTemplate<T> init(Class<T> clazz, FastExample<T> fastExample) {
+    public static <T> DaoTemplate<T> init(Class<T> clazz, FastBase<T> fastBase) {
         DaoTemplate<T> template = daoTemplateThreadLocal.get();
         if (template == null) {
             template = new DaoTemplate<>();
             template.daoActuator = ProxyUtil.proxy(FastDaoAttributes.<T>getDaoActuator(), DaoActuatorAspect.class);
             daoTemplateThreadLocal.set(template);
         }
-        template.fastExample = fastExample;
+        template.fastBase = fastBase;
         template.tableMapper = TableMapperUtil.getTableMappers(clazz);
-        FastDaoParam.init(template.tableMapper, template.fastExample);
+        FastDaoParam.init(template.tableMapper, template.fastBase);
         return template;
     }
 
@@ -126,7 +126,7 @@ public class DaoTemplate<T> {
         for (List<T> ts : inSplit) {
             FastDaoParam.<T>get().setInsertList(ts);
             daoActuator.insert();
-            FastDaoParam.init(tableMapper, fastExample);
+            FastDaoParam.init(tableMapper, fastBase);
         }
         DataCache.upCache(tableMapper);
         return ins;
@@ -139,7 +139,7 @@ public class DaoTemplate<T> {
      * @return 查询结果
      */
     public T findOne() {
-        this.fastExample.conditionPackages().setLimit(1);
+        this.fastBase.conditionPackages().setLimit(1);
         List<T> pojos = findAll();
         if (CollUtil.isNotEmpty(pojos)) {
             return pojos.get(0);
@@ -154,14 +154,14 @@ public class DaoTemplate<T> {
      */
     public List<T> findAll() {
         if (FastDaoAttributes.isOpenCache && tableMapper.getCacheType() != null) {
-            List<T> list = DataCache.<T>init(tableMapper, fastExample).getList();
+            List<T> list = DataCache.<T>init(tableMapper, fastBase).getList();
             if (list != null) {
                 return list;
             }
         }
         List<T> query = daoActuator.select();
         if (FastDaoAttributes.isOpenCache && tableMapper.getCacheType() != null && query != null) {
-            DataCache.<T>init(tableMapper, fastExample).setList(query);
+            DataCache.<T>init(tableMapper, fastBase).setList(query);
         }
         return query;
     }
@@ -173,14 +173,14 @@ public class DaoTemplate<T> {
      */
     public Integer findCount() {
         if (FastDaoAttributes.isOpenCache && tableMapper.getCacheType() != null) {
-            Integer one = DataCache.<Integer>init(tableMapper, fastExample).getCount();
+            Integer one = DataCache.<Integer>init(tableMapper, fastBase).getCount();
             if (one != null) {
                 return one;
             }
         }
         Integer count = daoActuator.count();
         if (FastDaoAttributes.isOpenCache && tableMapper.getCacheType() != null && count != null) {
-            DataCache.<Integer>init(tableMapper, fastExample).setCount(count);
+            DataCache.<Integer>init(tableMapper, fastBase).setCount(count);
         }
         return count;
     }
@@ -199,12 +199,12 @@ public class DaoTemplate<T> {
             return new PageInfo<>(0, pageNum, pageSize, new ArrayList<T>(), navigatePages);
         }
         if (pageNum == 1) {
-            this.fastExample.conditionPackages().setPage(0);
+            this.fastBase.conditionPackages().setPage(0);
         } else {
-            this.fastExample.conditionPackages().setPage((pageNum - 1) * pageSize);
+            this.fastBase.conditionPackages().setPage((pageNum - 1) * pageSize);
         }
-        this.fastExample.conditionPackages().setSize(pageSize);
-        FastDaoParam.init(tableMapper, fastExample);
+        this.fastBase.conditionPackages().setSize(pageSize);
+        FastDaoParam.init(tableMapper, fastBase);
         List<T> list = findAll();
         if (list == null) {
             list = new ArrayList<>();
@@ -236,7 +236,7 @@ public class DaoTemplate<T> {
      * @return 删除条数
      */
     public Integer delete() {
-        if (!FastDaoAttributes.isOpenLogicDelete || !fastExample.conditionPackages().getLogicDeleteProtect() || fastExample.conditionPackages().getCustomSql() != null) {
+        if (!FastDaoAttributes.isOpenLogicDelete || !fastBase.conditionPackages().getLogicDeleteProtect() || fastBase.conditionPackages().getCustomSql() != null) {
             return DataCache.upCache(daoActuator.delete(), tableMapper);
         }
 

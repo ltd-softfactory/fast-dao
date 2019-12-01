@@ -6,7 +6,7 @@ package ${table.pojoFastDaoPackPath};
 
 import ${table.pojoClassPackPath};
 import com.fast.base.BaseFastDao;
-import com.fast.condition.FastExample;
+import com.fast.condition.FastBase;
 <#list table.packages as package>
 ${package}
 </#list>
@@ -24,7 +24,7 @@ public class ${table.pojoFastDaoName} extends BaseFastDao<${beanName}> {
     }
 
 <#list keys as key>
-    public FastExample.Criteria<${beanName}> ${key}(${properties["${key}"]}... ${key}s){return fastExample.field("${key}").valEqual(${key}s);}
+    public FastExample.Criteria<${beanName}> ${key}(${properties["${key}"]}... ${key}s){return fastBase.field("${key}").valEqual(${key}s);}
 </#list>
 
 }

@@ -1,8 +1,8 @@
 package com.fast.base;
 
 import cn.hutool.core.util.ClassUtil;
+import com.fast.condition.FastBase;
 import com.fast.fast.FastDao;
-import com.fast.condition.FastExample;
 
 import java.util.Map;
 
@@ -17,14 +17,14 @@ public class BaseFastDao<T> {
     /**
      * 条件封装器
      */
-    protected FastExample<T> fastExample;
+    protected FastBase<T> fastBase;
 
     protected BaseFastDao() {
-        fastExample = new FastExample<>((Class<T>) ClassUtil.getTypeArgument(this.getClass()));
+        fastBase = new FastBase<>((Class<T>) ClassUtil.getTypeArgument(this.getClass()));
     }
 
     public FastDao<T> dao() {
-        return fastExample.dao();
+        return fastBase.dao();
     }
 
     /**
@@ -33,7 +33,7 @@ public class BaseFastDao<T> {
      * @param o 传入对象中参数不为空的属性会作为AND条件
      */
     public void equalObject(Object o) {
-        fastExample.equalObject(o);
+        fastBase.equalObject(o);
     }
 
     /**
@@ -42,7 +42,7 @@ public class BaseFastDao<T> {
      * @param queryColumn SELECT查询时自定义列
      */
     public void customQueryColumn(String queryColumn) {
-        fastExample.customQueryColumn(queryColumn);
+        fastBase.customQueryColumn(queryColumn);
     }
 
     /**
@@ -52,7 +52,7 @@ public class BaseFastDao<T> {
      * @param params 占位符参数,如果使用占位符进行条件参数封装,必须传入条件参数 如上,需要使用Map put("userName","XXX")
      */
     public void andSql(String sql, Map<String, Object> params) {
-        fastExample.andSql(sql, params);
+        fastBase.andSql(sql, params);
     }
 
     /**
@@ -62,7 +62,7 @@ public class BaseFastDao<T> {
      * @param params 占位符参数,如果使用占位符进行条件参数封装,必须传入条件参数 如上,需要使用Map put("userName","XXX")
      */
     public void sql(String sql, Map<String, Object> params) {
-        fastExample.sql(sql, params);
+        fastBase.sql(sql, params);
     }
 
 
@@ -74,14 +74,14 @@ public class BaseFastDao<T> {
      * @param params 占位符参数,如果使用占位符进行条件参数封装,必须传入条件参数 如上,需要使用Map put("userName","XXX")
      */
     public void orSQL(String sql, Map<String, Object> params) {
-        fastExample.orSql(sql, params);
+        fastBase.orSql(sql, params);
     }
 
     /**
      * 关闭逻辑删除条件保护,如果开启了逻辑删除功能,需要进行删除数据的操作,需要使用此方法进行关闭逻辑条件过滤
      */
     public void closeLogicDeleteProtect() {
-        fastExample.closeLogicDeleteProtect();
+        fastBase.closeLogicDeleteProtect();
     }
 
 }

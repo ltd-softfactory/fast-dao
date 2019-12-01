@@ -14,10 +14,10 @@ import java.util.Map;
  * @param <T> 操作的类泛型
  * @author 张亚伟 https://github.com/kaixinzyw
  */
-public class FastExample<T> {
+public class FastBase<T> {
 
 
-    private FastExample() {
+    private FastBase() {
     }
 
     /**
@@ -25,7 +25,7 @@ public class FastExample<T> {
      *
      * @param pojoClass 操作类信息
      */
-    public FastExample(Class<T> pojoClass) {
+    public FastBase(Class<T> pojoClass) {
         criteria = new Criteria<>(pojoClass, this);
     }
 
@@ -148,16 +148,16 @@ public class FastExample<T> {
         /**
          * SQL封装操作器
          */
-        private FastExample<P> fastExample;
+        private FastBase<P> fastBase;
 
         /**
          * 操作的字段
          */
         private String fieldName;
 
-        public Criteria(Class<P> pojoClass, FastExample<P> fastExample) {
+        public Criteria(Class<P> pojoClass, FastBase<P> fastBase) {
             this.pojoClass = pojoClass;
-            this.fastExample = fastExample;
+            this.fastBase = fastBase;
         }
 
         /**
@@ -569,7 +569,7 @@ public class FastExample<T> {
          * @return Dao执行器
          */
         public FastDao<P> dao() {
-            return FastDao.<P>init(pojoClass, fastExample);
+            return FastDao.<P>init(pojoClass, fastBase);
         }
 
     }

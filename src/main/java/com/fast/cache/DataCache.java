@@ -3,7 +3,7 @@ package com.fast.cache;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.text.StrBuilder;
 import cn.hutool.json.JSONUtil;
-import com.fast.condition.FastExample;
+import com.fast.condition.FastBase;
 import com.fast.config.FastDaoAttributes;
 import com.fast.mapper.TableMapper;
 import io.netty.util.concurrent.FastThreadLocal;
@@ -46,7 +46,7 @@ public class DataCache<T> {
 
     private static final FastThreadLocal<DataCache> dataCacheThreadLocal = new FastThreadLocal<>();
 
-    public static <T> DataCache<T> init(TableMapper tableMapper, FastExample fastExample) {
+    public static <T> DataCache<T> init(TableMapper tableMapper, FastBase fastBase) {
         DataCache<T> dataCache = dataCacheThreadLocal.get();
         if (dataCache == null) {
             dataCache = new DataCache<>();
@@ -55,10 +55,10 @@ public class DataCache<T> {
         dataCache.tableMapper = tableMapper;
         dataCache.tableName = tableMapper.getTableName();
 
-        if (fastExample.conditionPackages() == null) {
+        if (fastBase.conditionPackages() == null) {
             dataCache.keyName = StrBuilder.create(PREFIX_NAME,tableMapper.getTableName(),SEPARATOR,NULL);
         } else {
-            dataCache.keyName = StrBuilder.create(PREFIX_NAME, tableMapper.getTableName(),SEPARATOR,JSONUtil.toJsonStr(fastExample.conditionPackages()));
+            dataCache.keyName = StrBuilder.create(PREFIX_NAME, tableMapper.getTableName(),SEPARATOR,JSONUtil.toJsonStr(fastBase.conditionPackages()));
         }
 
         return dataCache;

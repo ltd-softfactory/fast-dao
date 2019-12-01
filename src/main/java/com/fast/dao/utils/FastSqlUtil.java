@@ -114,7 +114,7 @@ public class FastSqlUtil {
      * @param param      Dao执行参数
      */
     public static void whereSql(StrBuilder sqlBuilder, FastDaoParam param) {
-        ConditionPackages select = param.getFastExample().conditionPackages();
+        ConditionPackages select = param.getFastBase().conditionPackages();
         Map paramMap = param.getParamMap();
         TableMapper tableMapper = param.getTableMapper();
         sqlBuilder.append(WHERE);
@@ -225,7 +225,7 @@ public class FastSqlUtil {
      * @param param      Dao执行条件
      */
     public static void orderBy(StrBuilder sqlBuilder, FastDaoParam param) {
-        ConditionPackages conditionPackages = param.getFastExample().conditionPackages();
+        ConditionPackages conditionPackages = param.getFastBase().conditionPackages();
         TableMapper tableMapper = param.getTableMapper();
         if (conditionPackages != null && conditionPackages.getOrderByQuery() != null) {
             for (ConditionPackages.OrderByQuery orderByQuery : conditionPackages.getOrderByQuery()) {
@@ -245,7 +245,7 @@ public class FastSqlUtil {
      * @param param      Dao执行条件
      */
     public static void limit(StrBuilder sqlBuilder, FastDaoParam param) {
-        ConditionPackages conditionPackages = param.getFastExample().conditionPackages();
+        ConditionPackages conditionPackages = param.getFastBase().conditionPackages();
         if (conditionPackages != null) {
             if (conditionPackages.getPage() != null && conditionPackages.getSize() != null) {
                 ParamIndex paramIndex = new ParamIndex();
@@ -272,7 +272,7 @@ public class FastSqlUtil {
      */
     public static StrBuilder selectSql(FastDaoParam param) {
         StrBuilder sqlBuilder = StrUtil.strBuilder(SELECT);
-        ConditionPackages select = param.getFastExample().conditionPackages();
+        ConditionPackages select = param.getFastBase().conditionPackages();
         TableMapper tableMapper = param.getTableMapper();
         Map<String, String> fieldTableNames = tableMapper.getShowTableNames();
 

@@ -10,6 +10,8 @@ import java.util.*;
  */
 public class FileCreateConfig {
 
+    private String  destPath;
+
     /**
      * 模板文件生成的包路径 xxx.xxx.xxx
      */
@@ -309,4 +311,11 @@ public class FileCreateConfig {
         return dtoPackage;
     }
 
+    public String getDestPath() {
+        return destPath;
+    }
+
+    public void setDestPath(String destPath) {
+        this.destPath = destPath;
+    }
 }

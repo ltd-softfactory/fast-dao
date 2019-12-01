@@ -1,7 +1,7 @@
 package com.fast.fast;
 
 import cn.hutool.core.util.StrUtil;
-import com.fast.condition.FastExample;
+import com.fast.condition.FastBase;
 import com.fast.dao.utils.FastSqlUtil;
 import com.fast.mapper.TableMapper;
 import io.netty.util.concurrent.FastThreadLocal;
@@ -24,7 +24,7 @@ public class FastDaoParam<T> {
     /**
      * SQL条件封装
      */
-    private FastExample<T> fastExample;
+    private FastBase<T> fastBase;
     /**
      * SQL执行时间
      */
@@ -73,7 +73,7 @@ public class FastDaoParam<T> {
      */
     private static final FastThreadLocal<FastDaoParam> fastDaoParamThreadLocal = new FastThreadLocal<>();
 
-    public static <T> FastDaoParam<T> init(TableMapper<T> mapper, FastExample<T> example) {
+    public static <T> FastDaoParam<T> init(TableMapper<T> mapper, FastBase<T> example) {
         FastDaoParam<T> daoParam = fastDaoParamThreadLocal.get();
         if (daoParam == null) {
             daoParam = new FastDaoParam<>();
@@ -87,10 +87,10 @@ public class FastDaoParam<T> {
         daoParam.updateSelective = Boolean.FALSE;
 
         daoParam.tableMapper = mapper;
-        daoParam.fastExample = example;
-        if (StrUtil.isNotEmpty(daoParam.fastExample.conditionPackages().getCustomSql())) {
-            daoParam.sql = FastSqlUtil.sqlConversion(daoParam.fastExample.conditionPackages().getCustomSql());
-            daoParam.paramMap = daoParam.fastExample.conditionPackages().getCustomSqlParams();
+        daoParam.fastBase = example;
+        if (StrUtil.isNotEmpty(daoParam.fastBase.conditionPackages().getCustomSql())) {
+            daoParam.sql = FastSqlUtil.sqlConversion(daoParam.fastBase.conditionPackages().getCustomSql());
+            daoParam.paramMap = daoParam.fastBase.conditionPackages().getCustomSqlParams();
             return daoParam;
         }
         daoParam.sql = null;
@@ -153,12 +153,12 @@ public class FastDaoParam<T> {
         this.tableMapper = tableMapper;
     }
 
-    public FastExample<T> getFastExample() {
-        return fastExample;
+    public FastBase<T> getFastBase() {
+        return fastBase;
     }
 
-    public void setFastExample(FastExample<T> fastExample) {
-        this.fastExample = fastExample;
+    public void setFastBase(FastBase<T> fastBase) {
+        this.fastBase = fastBase;
     }
 
     public Object getReturnVal() {
